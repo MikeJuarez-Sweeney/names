@@ -1,10 +1,12 @@
 package com.names.controllers;
 
-import com.names.DataStore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.names.db.DataStore;
 import com.names.model.Person;
+import com.names.service.NameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,6 +20,9 @@ public class NameController {
     @Autowired
     private DataStore dataStore;
 
+    @Autowired
+    private NameService nameService;
+
     @GetMapping(value = "/")
     public Map<Integer, Person> getAllPersons() {
 
@@ -27,27 +32,39 @@ public class NameController {
     @GetMapping(value = "/{id}")
     public Person getPerson(@PathVariable String id) {
         int intId = Integer.parseInt(id);
-        Person person = dataStore.getPerson(intId);
-        return person;
+        return dataStore.getPerson(intId);
     }
 
     @PostMapping(value = "/", consumes = "application/json")
-    public ResponseEntity insertPerson(@RequestBody Person person) {
-        dataStore.addPerson(person);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public String insertPerson(@RequestBody Person person) {
+
+        Integer id = nameService.getNewId();
+        if(id !=null)
+            try {
+                int intId = Integer.parseInt(String.valueOf(id));
+                dataStore.addPerson(intId, person);
+        } catch (NumberFormatException e) {
+            System.out.println("This is not a number");
+            System.out.println(e.getMessage());
+        }
+        return person.getFirstName() + "'s ID: " + id;
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
-    public ResponseEntity changeFirstName(@PathVariable int id,
-                                          @RequestBody Person newPersonInfo) {
-        dataStore.replaceInfo(id, newPersonInfo);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public String changeFirstName(@PathVariable int id,
+                                  @RequestBody String newPersonInfo) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Person person = mapper.readValue(newPersonInfo, Person.class);
+
+        dataStore.replaceInfo(id, person);
+        return "ID #" + id + " has been updated.";
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deletePerson(@PathVariable int id) {
+    public String deletePerson(@PathVariable int id) {
         dataStore.removePerson(id);
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        return "ID #" + id + " has been deleted.";
     }
 
 }

@@ -1,4 +1,4 @@
-package com.names;
+package com.names.db;
 
 import com.names.model.Person;
 import org.springframework.stereotype.Component;
@@ -11,8 +11,6 @@ public class DataStore {
 
     private String person;
 
-    private int id = 1000;
-
     private Map<Integer, Person> peopleData = new HashMap<>();
 
     public String getPerson() {
@@ -23,8 +21,8 @@ public class DataStore {
         this.person = person;
     }
 
-    public void addPerson(Person person) {
-        peopleData.put(createId(), person);
+    public void addPerson(int id, Person person) {
+        peopleData.put(id, person);
     }
 
     public Person getPerson(Integer id) {
@@ -35,7 +33,6 @@ public class DataStore {
         peopleData.remove(id);
     }
 
-
     public Map<Integer, Person> getPeopleData() {
         return peopleData;
     }
@@ -44,26 +41,7 @@ public class DataStore {
         this.peopleData = peopleData;
     }
 
-    private int createId() {
-        int personId = id;
-        id++;
-        return personId;
-    }
-
     public void replaceInfo(int id, Person newPerson) {
         peopleData.replace(id, newPerson);
     }
-/*    public void initializeData() {
-        Person per1 = new Person();
-        per1.setFirstName("George");
-        per1.setLastName("Jetson");
-
-
-        Person per2 = new Person();
-        per2.setFirstName("Jim");
-        per2.setLastName("Smith");
-
-        peopleData.put(123, per1);
-        peopleData.put(456, per2);
-    }*/
 }
