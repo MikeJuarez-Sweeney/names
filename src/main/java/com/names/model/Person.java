@@ -31,6 +31,15 @@ public class Person {
         return firstName;
     }
 
+    @Override
+    public String toString() {
+        return "Person{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
