@@ -1,21 +1,16 @@
 package com.names.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.names.db.DataStore;
 import com.names.model.Person;
 import com.names.service.NameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.ConnectException;
 import java.util.Map;
 
 @RestController
 public class NameController {
-
-    @Autowired
-    private Person person;
 
     @Autowired
     private DataStore dataStore;
@@ -36,28 +31,26 @@ public class NameController {
     }
 
     @PostMapping(value = "/", consumes = "application/json")
-    public String insertPerson(@RequestBody Person person) {
+    public String insertPerson(@RequestBody Person person) throws ConnectException {
 
         Integer id = nameService.getNewId();
-        if(id !=null)
+        if (id != null)
             try {
                 int intId = Integer.parseInt(String.valueOf(id));
                 dataStore.addPerson(intId, person);
-        } catch (NumberFormatException e) {
-            System.out.println("This is not a number");
-            System.out.println(e.getMessage());
-        }
-        return person.getFirstName() + "'s ID: " + id;
+                return person.getFirstName() + "'s ID: " + id;
+            } catch (NumberFormatException e) {
+                System.out.println("This is not a number");
+                System.out.println(e.getMessage());
+            }
+        return "Unable to add person.";
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
-    public String changeFirstName(@PathVariable int id,
-                                  @RequestBody String newPersonInfo) throws JsonProcessingException {
+    public String changePersonInfo(@PathVariable int id,
+                                  @RequestBody Person newPersonInfo) {
 
-        ObjectMapper mapper = new ObjectMapper();
-        Person person = mapper.readValue(newPersonInfo, Person.class);
-
-        dataStore.replaceInfo(id, person);
+        dataStore.replaceInfo(id, newPersonInfo);
         return "ID #" + id + " has been updated.";
     }
 
@@ -66,5 +59,4 @@ public class NameController {
         dataStore.removePerson(id);
         return "ID #" + id + " has been deleted.";
     }
-
 }
