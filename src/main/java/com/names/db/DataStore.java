@@ -11,6 +11,8 @@ public class DataStore {
 
     private String person;
 
+    private int id = 1000;
+
     private Map<Integer, Person> peopleData = new HashMap<>();
 
     public String getPerson() {
@@ -43,5 +45,16 @@ public class DataStore {
 
     public void replaceInfo(int id, Person newPerson) {
         peopleData.replace(id, newPerson);
+    }
+
+    public boolean checkKey(Integer key) {
+        return peopleData.containsKey(key);
+    }
+
+    public int createId() {
+
+        int personId = id;
+        id++;
+        return personId;
     }
 }

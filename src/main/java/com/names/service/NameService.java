@@ -15,20 +15,25 @@ import java.net.ConnectException;
 public class NameService {
 
     @Autowired
-    DataStore dataStore;
+    private DataStore dataStore;
 
     private RestTemplate template = new RestTemplate();
 
-    @Retryable(maxAttempts = 5, value = ConnectException.class,
+    @Retryable(maxAttempts = 3, value = ConnectException.class,
             backoff = @Backoff(delay = 1000, multiplier = 2))
     public Integer getNewId() throws ConnectException {
         System.out.println("Trying...");
-
-        return template.exchange("http://localhost:8082/", HttpMethod.GET, null, Integer.class).getBody();
+        Integer id = template.exchange("http://localhost:8082/", HttpMethod.GET, null, Integer.class).getBody();
+        if (dataStore.checkKey(id))
+            id = getNewId();
+        return id;
     }
 
     @Recover
-    private void recoveryMethodTBD() {
-        //TODO Figure out what to do
+    public Integer createId() {
+        int id = dataStore.createId();
+        if (dataStore.checkKey(id))
+            id = createId();
+        return id;
     }
 }
