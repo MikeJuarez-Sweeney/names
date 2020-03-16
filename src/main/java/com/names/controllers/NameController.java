@@ -1,12 +1,12 @@
 package com.names.controllers;
 
 import com.names.db.DataStore;
+import com.names.exception.NoConnectionException;
 import com.names.model.Person;
 import com.names.service.NameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.ConnectException;
 import java.util.Map;
 
 @RestController
@@ -31,7 +31,7 @@ public class NameController {
     }
 
     @PostMapping(value = "/", consumes = "application/json")
-    public String insertPerson(@RequestBody Person person) throws ConnectException {
+    public String insertPerson(@RequestBody Person person) throws NoConnectionException{
 
         Integer id = nameService.getNewId();
         if (id != null)
@@ -48,7 +48,7 @@ public class NameController {
 
     @PutMapping(value = "/{id}", consumes = "application/json")
     public String changePersonInfo(@PathVariable int id,
-                                  @RequestBody Person newPersonInfo) {
+                                   @RequestBody Person newPersonInfo) {
 
         dataStore.replaceInfo(id, newPersonInfo);
         return "ID #" + id + " has been updated.";

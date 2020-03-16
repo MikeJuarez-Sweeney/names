@@ -1,0 +1,4 @@
+retry:
+  service:
+    retry-attempts: ${RETRY_ATTEMPTS:3}
+    retry-delay: ${RETRY_DELAY:1000}
