@@ -1,7 +1,6 @@
 package com.names.service;
 
 import com.names.db.DataStore;
-import com.names.exception.NoConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,12 @@ public class NameService {
 
     private RestTemplate template = new RestTemplate();
 
-    @Retryable(maxAttemptsExpression = "${retry.service.retry-attempts}", value = {ConnectException.class}, backoff = @Backoff(delayExpression = "${retry.service.retry-delay}"))
-    public Integer getNewId() throws NoConnectionException {
+    @Retryable(maxAttemptsExpression = "${retry.service.retry-attempts}", value = {ConnectException.class},
+            backoff = @Backoff(delayExpression = "${retry.service.retry-delay}"))
+    public Integer getNewId() {
         System.out.println("Trying...");
-            Integer id = template.exchange("http://localhost:8082/", HttpMethod.GET, null, Integer.class).getBody();
+
+        Integer id = template.exchange("http://localhost:8082/", HttpMethod.GET, null, Integer.class).getBody();
 
         if (dataStore.checkKey(id))
             id = getNewId();

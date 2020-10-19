@@ -7,24 +7,14 @@ public class Person {
 
     private String firstName;
 
-    private String lastName;
+    private String status;
 
-    private String phoneNumber;
-
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getStatus() {
+        return status;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getFirstName() {
@@ -35,8 +25,7 @@ public class Person {
     public String toString() {
         return "Person{" +
                 "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
+                ", lastName='" + status + '\'' +
                 '}';
     }
 
